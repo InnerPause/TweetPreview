@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Simple Tweet Preview</title>
+    <link rel="icon" href="favicon.webp" type="image/webp">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>A Simple Tweet Preview</h1>
+        <button id="theme-toggle">Toggle Theme</button>
+    </header>
+    <div class="app">
+        <div class="edit-section">
+            <h2>Edit Your Tweet</h2>
+            <label>
+                Tweet Text:
+                <textarea id="tweet-text" rows="4" placeholder="What's happening?"></textarea>
+            </label>
+            <label>
+                Username (e.g., @username):
+                <input type="text" id="username" placeholder="@username">
+            </label>
+            <div id="drop-zone">Drop images here or click to select (max 4)<input type="file" id="file-input" multiple accept="image/*" style="display: none;"></div>
+            <ul id="image-list"></ul>
+        </div>
+        <div class="preview-section">
+            <h2>Tweet Preview</h2>
+            <div id="tweet-preview">
+                <img id="preview-profile-pic" src="" alt="Profile Picture">
+                <div class="tweet-content">
+                    <div id="preview-username"></div>
+                    <div id="preview-text"></div>
+                    <div id="preview-media"></div>
+                    <div class="tweet-actions">
+                        <span><i class="fas fa-comment"></i> 0</span>
+                        <span><i class="fas fa-retweet"></i> 0</span>
+                        <span><i class="fas fa-heart"></i> 0</span>
+                        <span><i class="fas fa-share"></i></span>
+                    </div>
+                </div>
+            </div>
+            <button id="export-collage-btn">Export Image Collage</button>
+            <button id="export-tweet-btn">Export Tweet Preview</button>
+        </div>
+    </div>
+    <footer>
+        Developed by <a href="https://x.com/InnerPause" target="_blank">@InnerPause</a>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

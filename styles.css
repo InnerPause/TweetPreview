@@ -1,0 +1,272 @@
+:root {
+    --bg-color: #15202b;
+    --text-color: #ffffff;
+    --input-bg: #22303c;
+    --border-color: #38444d;
+    --tweet-bg: #192734;
+}
+
+body.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --input-bg: #f5f8fa;
+    --border-color: #ccd6dd;
+    --tweet-bg: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--tweet-bg);
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#theme-toggle {
+    padding: 5px 10px;
+    background-color: #1da1f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.app {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.edit-section, .preview-section {
+    flex: 1;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+textarea, input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+#drop-zone {
+    border: 2px dashed var(--border-color);
+    padding: 20px;
+    text-align: center;
+    background: var(--input-bg);
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+#drop-zone.dragover {
+    background: var(--border-color);
+}
+
+#image-list {
+    list-style: none;
+    margin-top: 10px;
+}
+
+#image-list li {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 5px;
+}
+
+#image-list img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.drag-handle {
+    cursor: move;
+    margin-right: 10px;
+    color: #8899ac;
+}
+
+.remove-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #8899ac;
+    cursor: pointer;
+    font-size: 16px;
+    display: none;
+}
+
+#image-list li:hover .remove-btn {
+    display: block;
+}
+
+#tweet-preview {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    max-width: 500px;
+    background: var(--tweet-bg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+}
+
+#preview-profile-pic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tweet-content {
+    flex: 1;
+}
+
+#preview-username {
+    font-weight: bold;
+}
+
+#preview-text {
+    margin-top: 5px;
+    word-wrap: break-word;
+}
+
+#preview-media {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.media-container {
+    width: 100%;
+}
+
+.media-container.media-one.portrait {
+    aspect-ratio: 4 / 5;
+}
+
+.media-container.media-one.landscape {
+    aspect-ratio: 16 / 9;
+}
+
+.media-container.media-two,
+.media-container.media-three,
+.media-container.media-four {
+    aspect-ratio: 16 / 9;
+}
+
+.media-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-two, .media-three, .media-four {
+    display: flex;
+}
+
+.media-two > div {
+    width: 50%;
+    height: 100%;
+}
+
+.media-three > div:first-child {
+    width: 50%;
+    height: 100%;
+}
+
+.media-three > div:last-child {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.media-three > div:last-child > div {
+    height: 50%;
+}
+
+.media-four {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.tweet-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: #8899ac;
+    font-size: 14px;
+}
+
+.tweet-actions span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #8899ac;
+}
+
+footer a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+#export-collage-btn, #export-tweet-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #1da1f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .app {
+        flex-direction: column;
+    }
+    .edit-section, .preview-section {
+        width: 100%;
+    }
+    #tweet-preview {
+        max-width: 100%;
+    }
+}
