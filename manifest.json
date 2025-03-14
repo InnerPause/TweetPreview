@@ -1,0 +1,20 @@
+{
+  "name": "A Simple Tweet Preview",
+  "short_name": "TweetPreview",
+  "start_url": "/TweetPreview/",
+  "display": "standalone",
+  "background_color": "#15202b",
+  "theme_color": "#1da1f2",
+  "icons": [
+    {
+      "src": "/TweetPreview/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/TweetPreview/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
