@@ -16,7 +16,7 @@
 
 ### Online Version (GitHub Pages)
 
-You can use the application directly in your browser without downloading anything. Simply visit the [GitHub Pages site](https://yourusername.github.io/TweetPreview/).
+You can use the application directly in your browser without downloading anything. Simply visit the [GitHub Pages site](https://innerpause.github.io/TweetPreview/).
 
 - **How to Access**:
   1. Open your web browser (e.g., Chrome, Firefox, Safari).
@@ -31,7 +31,7 @@ If you prefer to run the application locally on your computer:
    - Open a terminal or command prompt.
    - Run the following command to download the project files:
      ```bash
-     git clone https://github.com/yourusername/TweetPreview.git
+     git clone https://github.com/innerpause/TweetPreview.git
      ```
    - If you don’t have Git installed, you can download the ZIP file from the GitHub repository page by clicking the green "Code" button and selecting "Download ZIP," then extract it to a folder.
 
