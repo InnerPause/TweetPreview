@@ -89,15 +89,18 @@ function updatePreview() {
     if (images.length === 0) return;
 
     const mediaContainer = document.createElement('div');
-    mediaContainer.className = `media-container media-${images.length === 1 ? 'one' : images.length === 2 ? 'two' : images.length === 3 ? 'three' : 'four'}`;
+    mediaContainer.className = 'media-container';
+
     if (images.length === 1) {
-        mediaContainer.classList.add(images[0].isPortrait ? 'portrait' : 'landscape');
+        mediaContainer.classList.add('media-one');
+        if (images[0].isPortrait) mediaContainer.classList.add('portrait');
         const imgDiv = document.createElement('div');
         const img = document.createElement('img');
         img.src = images[0].dataURL;
         imgDiv.appendChild(img);
         mediaContainer.appendChild(imgDiv);
     } else if (images.length === 2) {
+        mediaContainer.classList.add('media-two');
         images.forEach((imgData) => {
             const imgDiv = document.createElement('div');
             const img = document.createElement('img');
@@ -106,26 +109,16 @@ function updatePreview() {
             mediaContainer.appendChild(imgDiv);
         });
     } else if (images.length === 3) {
-        const leftDiv = document.createElement('div');
-        const leftImg = document.createElement('img');
-        leftImg.src = images[0].dataURL;
-        leftDiv.appendChild(leftImg);
-
-        const rightDiv = document.createElement('div');
-        const topRightDiv = document.createElement('div');
-        const topRightImg = document.createElement('img');
-        topRightImg.src = images[1].dataURL;
-        topRightDiv.appendChild(topRightImg);
-        const bottomRightDiv = document.createElement('div');
-        const bottomRightImg = document.createElement('img');
-        bottomRightImg.src = images[2].dataURL;
-        bottomRightDiv.appendChild(bottomRightImg);
-
-        rightDiv.appendChild(topRightDiv);
-        rightDiv.appendChild(bottomRightDiv);
-        mediaContainer.appendChild(leftDiv);
-        mediaContainer.appendChild(rightDiv);
+        mediaContainer.classList.add('media-three');
+        images.forEach((imgData) => {
+            const imgDiv = document.createElement('div');
+            const img = document.createElement('img');
+            img.src = imgData.dataURL;
+            imgDiv.appendChild(img);
+            mediaContainer.appendChild(imgDiv);
+        });
     } else if (images.length === 4) {
+        mediaContainer.classList.add('media-four');
         images.forEach((imgData) => {
             const imgDiv = document.createElement('div');
             const img = document.createElement('img');
