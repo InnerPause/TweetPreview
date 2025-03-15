@@ -1,79 +1,60 @@
 # A Simple Tweet Preview
 
-**A Simple Tweet Preview** is a web-based tool designed to help users create and visualize Twitter posts before sharing them. It allows you to input text, add images, and see a realistic preview of how your tweet will appear on Twitter, complete with a profile picture, username, and interactive buttons. The app is perfect for anyone who wants to perfect their tweets or create mockups for social media content.
-
-Hosted on [GitHub Pages](https://InnerPause.github.io/TweetPreview), this application is free to use and open-source.
-
----
+**A Simple Tweet Preview** is a web application designed to help users preview how their tweets, including text and up to four images, will look before posting them on Twitter. This tool addresses the issue with Twitter's current compose feature, which doesn't accurately display media layouts, ensuring that the visual arrangement of images is as intended.
 
 ## Features
 
-- **Realistic Tweet Preview**: See exactly how your tweet will look on Twitter, including text, images, profile picture, and username.
-- **Image Support**:
-  - Add up to 4 images with drag-and-drop functionality.
-  - Single images are cropped to 4:5 (portrait) or 16:9 (landscape) aspect ratios, mimicking Twitter's behavior.
-  - Multiple images are arranged in layouts similar to Twitter's (e.g., side-by-side for two images, grid for four).
-- **Export Options**:
-  - Export the image collage at high resolution: 1200x1500 for portrait, 1920x1080 for landscape.
-  - Export the entire tweet preview for a complete mockup.
-- **Light and Dark Mode**: Toggle between themes with a button in the header, with your preference saved for future visits.
-- **Responsive Design**: Optimized for both desktop and mobile devices, with a mobile-friendly file uploader.
-- **Custom Profile Picture**: Automatically fetches the profile picture based on the provided Twitter username.
-- **Interactive Mock Buttons**: Preview includes fake "Reply," "Retweet," "Like," and "Share" buttons for a realistic look.
+- **Input Fields**: Enter tweet text and username.
+- **Image Upload**: Add up to four images via drag-and-drop or file selection.
+- **Real-Time Preview**: See a live preview of the tweet, including profile picture, username, text, and media layout.
+- **Image Reordering**: Reorder images using drag-and-drop.
+- **Theme Support**: Switch between light and dark themes with persistent settings.
+- **Export Options**: Export the media collage or full tweet preview as PNG images.
+- **PWA Functionality**: Install the app for offline use and a native-like experience.
 
----
+## Usage Instructions
 
-## How to Use
+### Online Version (GitHub Pages)
 
-1. **Access the Application**:
-   - Visit [your-app-url](https://InnerPause.github.io/TweetPreview) to start using the tool.
+You can use the application directly in your browser without downloading anything. Simply visit the [GitHub Pages site](https://yourusername.github.io/TweetPreview/).
 
-2. **Input Tweet Details**:
-   - **Tweet Text**: Enter your tweet's text in the provided textarea.
-   - **Username**: Input your Twitter username (e.g., `@username`), and the app will fetch your profile picture automatically.
+- **How to Access**:
+  1. Open your web browser (e.g., Chrome, Firefox, Safari).
+  2. Type or paste the URL above into the address bar and press Enter.
+  3. Start using the app immediately—no installation required!
 
-3. **Add Images**:
-   - Drag and drop images into the drop zone or click to select files (up to 4 images).
-   - On mobile, tap the drop zone to open the file picker.
-   - Rearrange images by dragging them in the list, or remove them by clicking the "×" button.
+### Local Version
 
-4. **Preview Your Tweet**:
-   - The preview updates in real-time as you edit.
-   - Single images are cropped to 4:5 (portrait) or 16:9 (landscape).
-   - Multiple images are arranged in Twitter-like layouts.
+If you prefer to run the application locally on your computer:
 
-5. **Export Your Creation**:
-   - **Export Image Collage**: Download just the image portion (1200x1500 for portrait, 1920x1080 for landscape).
-   - **Export Tweet Preview**: Download the entire tweet mockup.
+1. **Clone the Repository**:
+   - Open a terminal or command prompt.
+   - Run the following command to download the project files:
+     ```bash
+     git clone https://github.com/yourusername/TweetPreview.git
+     ```
+   - If you don’t have Git installed, you can download the ZIP file from the GitHub repository page by clicking the green "Code" button and selecting "Download ZIP," then extract it to a folder.
 
-6. **Toggle Theme**:
-   - Use the "Toggle Theme" button in the header to switch between light and dark modes.
+2. **Navigate to the Project Directory**:
+   - In your terminal, move into the project folder by typing:
+     ```bash
+     cd TweetPreview
+     ```
+   - If you downloaded the ZIP, open the extracted folder in your file explorer.
 
----
+3. **Open `index.html`**:
+   - Locate the `index.html` file in the project folder.
+   - Double-click it to open it in your default web browser, or right-click and choose "Open with" followed by your preferred browser (e.g., Chrome).
+   - The app will load and be ready to use locally.
 
-## Technical Details
+## Patch Notes (Version 1.1)
 
-- **Built With**:
-  - HTML, CSS, JavaScript
-  - [Font Awesome](https://fontawesome.com/) for icons
-  - [Sortable.js](https://sortablejs.github.io/Sortable/) for drag-and-drop functionality
-  - [html2canvas](https://html2canvas.hertzen.com/) for exporting images
+Since the initial stable version, the following enhancements have been made:
 
-- **Deployment**:
-  - Hosted on GitHub Pages for easy access and sharing.
-
-- **Browser Compatibility**:
-  - Works on modern browsers (Chrome, Firefox, Safari, Edge).
-  - Optimized for mobile devices with touch-friendly controls.
-
----
+- **Rounded Corners**: Implemented for a softer, modern aesthetic, matching Twitter's visual style.
+- **Image Borders**: Added borders (gaps) between images in the tweet preview for a more accurate representation.
+- **Interactive Buttons**: Enhanced buttons with hover and click animations for a more responsive user experience.
 
 ## Credits
 
-Developed by [@InnerPause](https://x.com/InnerPause). Feel free to reach out with feedback or contributions!
-
----
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
+Developed by [InnerPause](https://x.com/InnerPause). Follow for updates and more projects.
