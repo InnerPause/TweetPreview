@@ -46,6 +46,7 @@ h1 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .app {
@@ -104,6 +105,7 @@ textarea, input[type="text"] {
     padding: 5px;
     border: 1px solid var(--border-color);
     margin-bottom: 5px;
+    border-radius: 4px;
 }
 
 #image-list img {
@@ -127,6 +129,7 @@ textarea, input[type="text"] {
     cursor: pointer;
     font-size: 16px;
     display: none;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 #image-list li:hover .remove-btn {
@@ -141,6 +144,7 @@ textarea, input[type="text"] {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     display: flex;
     gap: 10px;
+    border-radius: 10px;
 }
 
 #preview-profile-pic {
@@ -168,59 +172,94 @@ textarea, input[type="text"] {
     width: 100%;
 }
 
+/* Media container using grid for all layouts */
 .media-container {
-    width: 100%;
-}
-
-.media-container.media-one.portrait {
-    aspect-ratio: 4 / 5;
-}
-
-.media-container.media-one.landscape {
+    display: grid;
+    gap: 4px;
     aspect-ratio: 16 / 9;
 }
 
-.media-container.media-two,
-.media-container.media-three,
-.media-container.media-four {
-    aspect-ratio: 16 / 9;
+.media-one {
+    grid-template-columns: 1fr;
+}
+
+.media-one.portrait {
+    aspect-ratio: 4 / 5; /* Fixed for single portrait images */
+}
+
+.media-one > div {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.media-two {
+    grid-template-columns: 1fr 1fr;
+}
+
+.media-two > div:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    overflow: hidden;
+}
+
+.media-two > div:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+}
+
+.media-three {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr; /* Equal rows for symmetry */
+    align-items: stretch; /* Ensures images fill their grid areas */
+}
+
+.media-three > div:first-child {
+    grid-row: 1 / 3;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    overflow: hidden;
+}
+
+.media-three > div:nth-child(2) {
+    border-top-right-radius: 10px;
+    overflow: hidden;
+}
+
+.media-three > div:nth-child(3) {
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+}
+
+.media-four {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.media-four > div:nth-child(1) {
+    border-top-left-radius: 10px;
+    overflow: hidden;
+}
+
+.media-four > div:nth-child(2) {
+    border-top-right-radius: 10px;
+    overflow: hidden;
+}
+
+.media-four > div:nth-child(3) {
+    border-bottom-left-radius: 10px;
+    overflow: hidden;
+}
+
+.media-four > div:nth-child(4) {
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
 }
 
 .media-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.media-two, .media-three, .media-four {
-    display: flex;
-}
-
-.media-two > div {
-    width: 50%;
-    height: 100%;
-}
-
-.media-three > div:first-child {
-    width: 50%;
-    height: 100%;
-}
-
-.media-three > div:last-child {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.media-three > div:last-child > div {
-    height: 50%;
-}
-
-.media-four {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
 }
 
 .tweet-actions {
@@ -257,6 +296,27 @@ footer a {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover and active styles */
+#theme-toggle:hover, #export-collage-btn:hover, #export-tweet-btn:hover {
+    background-color: #0a84d6;
+}
+
+#theme-toggle:active, #export-collage-btn:active, #export-tweet-btn:active {
+    transform: scale(0.98);
+}
+
+.remove-btn:hover {
+    color: #ff0000;
+    transform: scale(1.2);
+}
+
+/* Focus styles for accessibility */
+#theme-toggle:focus, #export-collage-btn:focus, #export-tweet-btn:focus, .remove-btn:focus {
+    outline: 2px solid #1da1f2;
+    outline-offset: 2px;
 }
 
 @media (max-width: 768px) {
