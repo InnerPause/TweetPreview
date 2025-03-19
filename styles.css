@@ -80,6 +80,41 @@ textarea, input[type="text"] {
     color: var(--text-color);
 }
 
+.tweet-text-container {
+    position: relative;
+}
+
+#emoji-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#emoji-picker {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    display: none;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.emoji {
+    cursor: pointer;
+    margin: 5px;
+    font-size: 20px;
+    display: inline-block;
+}
+
 #drop-zone {
     border: 2px dashed var(--border-color);
     padding: 20px;
@@ -276,6 +311,16 @@ textarea, input[type="text"] {
     gap: 5px;
 }
 
+.like-button {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.like-button.liked {
+    transform: scale(1.2);
+    color: #e0245e; /* Twitter-like red color */
+}
+
 footer {
     text-align: center;
     padding: 10px;
@@ -288,7 +333,7 @@ footer a {
     text-decoration: none;
 }
 
-#export-collage-btn, #export-tweet-btn {
+#export-collage-btn {
     margin-top: 10px;
     padding: 10px 20px;
     background-color: #1da1f2;
@@ -300,11 +345,11 @@ footer a {
 }
 
 /* Hover and active styles */
-#theme-toggle:hover, #export-collage-btn:hover, #export-tweet-btn:hover {
+#theme-toggle:hover, #export-collage-btn:hover {
     background-color: #0a84d6;
 }
 
-#theme-toggle:active, #export-collage-btn:active, #export-tweet-btn:active {
+#theme-toggle:active, #export-collage-btn:active {
     transform: scale(0.98);
 }
 
@@ -314,9 +359,35 @@ footer a {
 }
 
 /* Focus styles for accessibility */
-#theme-toggle:focus, #export-collage-btn:focus, #export-tweet-btn:focus, .remove-btn:focus {
+#theme-toggle:focus, #export-collage-btn:focus, .remove-btn:focus {
     outline: 2px solid #1da1f2;
     outline-offset: 2px;
+}
+
+#char-count {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: right;
+    color: var(--text-color);
+}
+
+img.emoji {
+    height: 1em;
+    width: 1em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+}
+
+/* Visually hide elements while keeping them accessible to screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
 }
 
 @media (max-width: 768px) {
