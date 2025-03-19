@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-	<link rel="manifest" href="/TweetPreview/manifest.json">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="TweetPreview">
+    <script src="lib/twemoji.min.js"></script>
+    <script src="lib/twitter-text.min.js"></script>
+    <link rel="manifest" href="/TweetPreview/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="TweetPreview">
 </head>
 <body>
     <header>
@@ -23,14 +25,49 @@
         <div class="edit-section">
             <h2>Edit Your Tweet</h2>
             <label>
-                Tweet Text:
-                <textarea id="tweet-text" rows="4" placeholder="What's happening?"></textarea>
-            </label>
-            <label>
                 Username (e.g., @username):
                 <input type="text" id="username" placeholder="@username">
             </label>
-            <div id="drop-zone">Drop images here or click to select (max 4)<input type="file" id="file-input" multiple accept="image/*" style="display: none;"></div>
+            <label>
+                Tweet Text:
+                <div class="tweet-text-container">
+                    <textarea id="tweet-text" rows="4" placeholder="What's happening?" maxlength="280"></textarea>
+                    <button id="emoji-btn" type="button">😀</button>
+                    <div id="emoji-picker">
+                        <span class="emoji" data-emoji="😂">😂</span>
+                        <span class="emoji" data-emoji="❤️">❤️</span>
+                        <span class="emoji" data-emoji="🔥">🔥</span>
+                        <span class="emoji" data-emoji="👍">👍</span>
+                        <span class="emoji" data-emoji="😭">😭</span>
+                        <span class="emoji" data-emoji="🙏">🙏</span>
+                        <span class="emoji" data-emoji="😘">😘</span>
+                        <span class="emoji" data-emoji="🥰">🥰</span>
+                        <span class="emoji" data-emoji="😍">😍</span>
+                        <span class="emoji" data-emoji="😊">😊</span>
+                        <span class="emoji" data-emoji="🎉">🎉</span>
+                        <span class="emoji" data-emoji="😁">😁</span>
+                        <span class="emoji" data-emoji="💕">💕</span>
+                        <span class="emoji" data-emoji="🥺">🥺</span>
+                        <span class="emoji" data-emoji="😅">😅</span>
+                        <span class="emoji" data-emoji="☺️">☺️</span>
+                        <span class="emoji" data-emoji="🤣">🤣</span>
+                        <span class="emoji" data-emoji="🥵">🥵</span>
+                        <span class="emoji" data-emoji="😉">😉</span>
+                        <span class="emoji" data-emoji="😎">😎</span>
+                        <span class="emoji" data-emoji="🤔">🤔</span>
+                        <span class="emoji" data-emoji="🙄">🙄</span>
+                        <span class="emoji" data-emoji="😴">😴</span>
+                        <span class="emoji" data-emoji="🤯">🤯</span>
+                        <span class="emoji" data-emoji="🥳">🥳</span>
+                    </div>
+                </div>
+                <div id="char-count">280 / 280</div>
+            </label>
+            <div id="drop-zone" role="button" aria-label="Upload images" tabindex="0">
+                Drop images here or click to select (max 4)
+                <label for="file-input" class="visually-hidden">Upload images</label>
+                <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+            </div>
             <ul id="image-list"></ul>
         </div>
         <div class="preview-section">
@@ -44,13 +81,12 @@
                     <div class="tweet-actions">
                         <span><i class="fas fa-comment"></i> 0</span>
                         <span><i class="fas fa-retweet"></i> 0</span>
-                        <span><i class="fas fa-heart"></i> 0</span>
+                        <span class="like-button"><i class="fas fa-heart"></i> <span class="like-count">0</span></span>
                         <span><i class="fas fa-share"></i></span>
                     </div>
                 </div>
             </div>
             <button id="export-collage-btn">Export Image Collage</button>
-            <button id="export-tweet-btn">Export Tweet Preview</button>
         </div>
     </div>
     <footer>
