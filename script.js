@@ -204,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/@joeattardi/emoji-button@4.6.0/dist/index.min.js';
         script.onload = () => {
-            const picker = new EmojiButton();
+            const picker = new EmojiButton({
+                emojiType: 'native'
+            });
             picker.on('emoji', (selection) => {
                 tweetText.value += selection.emoji;
                 updatePreview();
