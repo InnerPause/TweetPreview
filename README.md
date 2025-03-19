@@ -48,6 +48,10 @@ If you prefer to run the application locally on your computer:
    - The app will load and be ready to use locally.
 
 ## Patch Notes
+ 
+* Known Issue *
+In the Online version of the app, the emoji menu remains unresponsive. Currently working on this. 
+
 
 ### Version 1.2
 - **Emoji Support**: Added an emoji picker that works both locally and online, allowing users to easily add emojis to their tweet text.
