@@ -1,4 +1,4 @@
-# A Simple Tweet Preview
+# A Simple Tweet Preview 2.0
 
 A clean, accurate browser-based tool for previewing how a post will appear on X (formerly Twitter) — including precise image cropping, profile picture lookup, and an authentic X UI aesthetic. No installation, no dependencies, no data sent anywhere. Just open the file and use it.
 
