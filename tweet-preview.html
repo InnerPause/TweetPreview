@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Simple Tweet Preview</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #f7f9f9;
+  --surface:    #ffffff;
+  --border-col: #eff3f4;
+  --focus-col:  #1d9bf0;
+  --text-col:   #0f1419;
+  --muted-col:  #536471;
+  --ph-col:     #8b98a5;
+  --accent-col: #1d9bf0;
+  --accent-dim: rgba(29,155,240,.10);
+  --danger-col: #f4212e;
+  --warn-col:   #ffd400;
+  --shadow-val: 0 1px 4px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+  --imgap:      3px;
+}
+[data-theme="dark"] {
+  --bg:         #000000;
+  --surface:    #16181c;
+  --border-col: #2f3336;
+  --text-col:   #e7e9ea;
+  --muted-col:  #71767b;
+  --ph-col:     #4a4f54;
+  --accent-dim: rgba(29,155,240,.12);
+  --shadow-val: 0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
+}
+
+html { font-size: 15px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text-col);
+  min-height: 100vh;
+  transition: background .2s, color .2s;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.hdr {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-col);
+  transition: background .2s, border-color .2s;
+}
+.hdr-in {
+  max-width: 620px; margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hdr-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
+
+.theme-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 15px; border-radius: 9999px;
+  border: 1.5px solid var(--border-col);
+  background: var(--bg); color: var(--text-col);
+  font-size: .82rem; font-weight: 600; font-family: inherit;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+.theme-btn:hover {
+  border-color: var(--accent-col); color: var(--accent-col);
+  background: var(--accent-dim); box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* ── Page wrap — single centred column ───────────────── */
+.wrap {
+  max-width: 620px; margin: 0 auto;
+  padding: 20px 16px 72px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+
+/* ── Card ────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-col);
+  border-radius: 16px;
+  box-shadow: var(--shadow-val);
+  overflow: hidden;
+  transition: background .2s, border-color .2s;
+}
+.card-head {
+  padding: 11px 16px 9px;
+  border-bottom: 1px solid var(--border-col);
+  font-size: .72rem; font-weight: 700; letter-spacing: .07em;
+  color: var(--muted-col); text-transform: uppercase;
+}
+.card-body { padding: 15px 16px; display: flex; flex-direction: column; gap: 13px; }
+
+/* ── Form ────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.lbl   { font-size: .72rem; font-weight: 600; color: var(--muted-col); letter-spacing: .03em; }
+
+input[type=text], textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border-col);
+  border-radius: 10px;
+  color: var(--text-col);
+  font-size: .92rem; font-family: inherit;
+  outline: none;
+  transition: border-color .14s, box-shadow .14s;
+}
+input[type=text] { padding: 7px 11px; }
+textarea { padding: 9px 11px; resize: vertical; min-height: 88px; line-height: 1.55; }
+input[type=text]:focus, textarea:focus {
+  border-color: var(--focus-col);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+input::placeholder, textarea::placeholder { color: var(--ph-col); }
+
+.at-wrap { position: relative; }
+.at-pre {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--muted-col); font-size: .92rem; pointer-events: none; user-select: none;
+}
+.at-wrap input { padding-left: 23px; }
+
+/* ── Char ring ───────────────────────────────────────── */
+.char-row { display: flex; align-items: center; justify-content: flex-end; gap: 9px; }
+.char-txt { font-size: .72rem; color: var(--muted-col); min-width: 78px; text-align: right; }
+.char-txt.warn { color: var(--warn-col); }
+.char-txt.over { color: var(--danger-col); font-weight: 700; }
+.ring { width: 28px; height: 28px; flex-shrink: 0; }
+.ring svg { transform: rotate(-90deg); display: block; }
+.ring circle { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.ring .rb { stroke: var(--border-col); }
+.ring .rf { stroke: var(--accent-col); transition: stroke-dashoffset .18s, stroke .18s; }
+.ring.warn .rf { stroke: var(--warn-col); }
+.ring.over .rf { stroke: var(--danger-col); }
+
+/* ── Drop zone ───────────────────────────────────────── */
+.drop {
+  position: relative; border: 2px dashed var(--border-col);
+  border-radius: 11px; padding: 18px; text-align: center;
+  cursor: pointer; transition: border-color .14s, background .14s;
+}
+.drop:hover, .drop.over { border-color: var(--accent-col); background: var(--accent-dim); }
+.drop input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.drop-ico { font-size: 24px; margin-bottom: 5px; }
+.drop-txt { font-size: .79rem; color: var(--muted-col); line-height: 1.4; }
+.drop-txt strong { color: var(--accent-col); }
+
+/* ── Thumbnail strip ─────────────────────────────────── */
+.thumb-strip {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  user-select: none; -webkit-user-select: none;
+}
+.thumb {
+  position: relative; width: 72px; height: 72px;
+  border-radius: 8px; overflow: hidden; flex-shrink: 0;
+  border: 1.5px solid var(--border-col);
+  cursor: grab; touch-action: none;
+  transition: transform .15s, box-shadow .15s, opacity .15s;
+}
+.thumb:active { cursor: grabbing; }
+.thumb.dragging  { opacity: .35; transform: scale(.93); }
+.thumb.drag-over { box-shadow: 0 0 0 2.5px var(--accent-col); transform: scale(1.07); }
+.thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  pointer-events: none; -webkit-user-drag: none;
+}
+.thumb-del {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(0,0,0,.72); color: #fff; border: none;
+  cursor: pointer; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .1s; z-index: 2; touch-action: manipulation;
+}
+.thumb-del:hover { background: var(--danger-col); }
+.thumb-num {
+  position: absolute; bottom: 3px; left: 4px;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-size: 10px; font-weight: 700; border-radius: 4px;
+  padding: 1px 4px; pointer-events: none;
+}
+.reorder-hint { font-size: .71rem; color: var(--ph-col); }
+
+/* Touch drag ghost */
+#tghost {
+  position: fixed; width: 72px; height: 72px; border-radius: 8px;
+  overflow: hidden; pointer-events: none; z-index: 9999;
+  opacity: .88; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  transform: translate(-50%,-50%) scale(1.1);
+  border: 2px solid var(--accent-col); display: none;
+}
+#tghost img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+hr.div { border: none; height: 1px; background: var(--border-col); }
+
+/* ═══════════════════════════════════════════════
+   TWEET PREVIEW
+═══════════════════════════════════════════════ */
+.tweet-wrap { padding: 14px 16px 6px; display: flex; gap: 11px; }
+
+.av {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg,#1d9bf0,#0966a8);
+  flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff; user-select: none;
+}
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.tweet-col { flex: 1; min-width: 0; }
+.tweet-meta {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px;
+  margin-bottom: 3px; line-height: 1.3;
+}
+.t-name {
+  font-weight: 700; font-size: .93rem; color: var(--text-col);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+}
+.t-handle, .t-dot, .t-time { font-size: .87rem; color: var(--muted-col); white-space: nowrap; }
+
+.tweet-text {
+  font-size: .96rem; line-height: 1.56; color: var(--text-col);
+  white-space: pre-wrap; word-break: break-word; margin-bottom: 9px;
+}
+.tweet-text .ht, .tweet-text .mn { color: var(--accent-col); }
+
+/* ── Image grid ──────────────────────────────────────
+   X crop rules:
+   1 img  : natural ratio clamped [3:4 … 2:1]
+   2 imgs : side-by-side, each 7:8
+   3 imgs : left fills grid height (7:8); right two cells each 7:4
+   4 imgs : 2×2 grid, each 16:9
+─────────────────────────────────────────────────── */
+.img-grid { border-radius: 14px; overflow: hidden; margin-bottom: 9px; display: none; }
+
+.img-grid.n1 { display: block; }
+.img-grid.n1 .cell { width: 100%; overflow: hidden; }
+.img-grid.n1 .cell img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 20%; display: block;
+}
+
+.img-grid.n2 { display: flex; gap: var(--imgap); }
+.img-grid.n2 .cell { flex: 1; aspect-ratio: 7/8; overflow: hidden; }
+.img-grid.n2 .cell img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+}
+
+.img-grid.n3 { display: flex; gap: var(--imgap); aspect-ratio: 7/4; }
+.img-grid.n3 .col-l { flex: 1; overflow: hidden; }
+.img-grid.n3 .col-l img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+}
+.img-grid.n3 .col-r { flex: 1; display: flex; flex-direction: column; gap: var(--imgap); }
+.img-grid.n3 .col-r .cell { flex: 1; overflow: hidden; }
+.img-grid.n3 .col-r .cell img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+}
+
+.img-grid.n4 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr; gap: var(--imgap); aspect-ratio: 32/18;
+}
+.img-grid.n4 .cell { overflow: hidden; aspect-ratio: 16/9; }
+.img-grid.n4 .cell img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+}
+
+/* ── Action bar ──────────────────────────────────────── */
+.act-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 0 5px; border-top: 1px solid var(--border-col); margin-top: 4px;
+}
+.act-grp { display: flex; gap: 2px; }
+.act {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 9px; border-radius: 9999px; border: none;
+  background: none; color: var(--muted-col); font-size: .78rem;
+  cursor: default; font-family: inherit;
+}
+.act svg { flex-shrink: 0; }
+
+/* ── Empty state ─────────────────────────────────────── */
+.empty { padding: 36px 20px; text-align: center; font-size: .88rem; color: var(--muted-col); }
+.empty-ico { font-size: 32px; margin-bottom: 7px; }
+
+/* ── Footer ──────────────────────────────────────────── */
+.foot { text-align: center; font-size: .75rem; color: var(--muted-col); padding-top: 2px; }
+.foot a { color: var(--accent-col); text-decoration: none; }
+.foot a:hover { text-decoration: underline; }
+</style>
+</head>
+<body data-theme="dark">
+
+<div id="tghost"><img id="tghost-img" src="" alt=""></div>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="hdr-title">A Simple Tweet Preview</span>
+    <button class="theme-btn" id="themeBtn">
+      <span id="themeIco">🌙</span>
+      <span id="themeLbl">Dark Mode</span>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Compose -->
+  <div class="card">
+    <div class="card-head">Compose</div>
+    <div class="card-body">
+
+      <div class="field">
+        <div class="lbl">Handle</div>
+        <div class="at-wrap">
+          <span class="at-pre">@</span>
+          <input type="text" id="uname" placeholder="username" maxlength="50" autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="lbl">Display Name</div>
+        <input type="text" id="dname" placeholder="Your Name" maxlength="50">
+      </div>
+
+      <hr class="div">
+
+      <div class="field">
+        <div class="lbl">Post Text</div>
+        <textarea id="txt" placeholder="What is happening?!" maxlength="280"></textarea>
+        <div class="char-row">
+          <span class="char-txt" id="charTxt">280 remaining</span>
+          <div class="ring" id="ring">
+            <svg width="28" height="28" viewBox="0 0 28 28">
+              <circle class="rb" cx="14" cy="14" r="11"/>
+              <circle class="rf" id="rf" cx="14" cy="14" r="11"
+                stroke-dasharray="69.115" stroke-dashoffset="0"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <hr class="div">
+
+      <div class="field">
+        <div class="lbl">
+          Images&nbsp;<span id="imgLbl" style="font-weight:400;color:var(--ph-col)">(0 / 4)</span>
+        </div>
+        <div class="drop" id="drop">
+          <input type="file" id="fileIn" accept="image/*" multiple>
+          <div class="drop-ico">🖼️</div>
+          <div class="drop-txt">
+            <strong>Click to upload</strong> or drag &amp; drop<br>Up to 4 · JPG PNG WebP GIF
+          </div>
+        </div>
+        <div class="thumb-strip" id="thumbStrip"></div>
+        <div class="reorder-hint" id="reorderHint" style="display:none">↔ Hold &amp; drag to reorder</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="card">
+    <div class="card-head">Preview</div>
+
+    <div class="empty" id="emptyState">
+      <div class="empty-ico">✏️</div>
+      Start typing to see your tweet preview
+    </div>
+
+    <div class="tweet-wrap" id="tweetWrap" style="display:none">
+      <div class="av" id="av">?</div>
+      <div class="tweet-col">
+        <div class="tweet-meta">
+          <span class="t-name"   id="pvName">Your Name</span>
+          <span class="t-handle" id="pvHandle">@username</span>
+          <span class="t-dot">·</span>
+          <span class="t-time"   id="pvTime">now</span>
+        </div>
+        <div class="tweet-text" id="pvText" style="display:none"></div>
+        <div class="img-grid"   id="imgGrid"></div>
+        <div class="act-bar">
+          <div class="act-grp">
+            <div class="act">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span id="statReply">0</span>
+            </div>
+            <div class="act">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+              <span id="statRT">0</span>
+            </div>
+            <div class="act">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              <span id="statLike">0</span>
+            </div>
+          </div>
+          <div class="act">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Developed by <a href="https://x.com/InnerPause" target="_blank">@InnerPause</a></div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+var imgs        = [];
+var avatarCache = {};
+var avatarTimer = null;
+var CIRC        = 69.115;
+
+function gi(id) { return document.getElementById(id); }
+
+var themeBtn    = gi('themeBtn');
+var themeIco    = gi('themeIco');
+var themeLbl    = gi('themeLbl');
+var dnameEl     = gi('dname');
+var unameEl     = gi('uname');
+var txtEl       = gi('txt');
+var charTxtEl   = gi('charTxt');
+var ringEl      = gi('ring');
+var rfEl        = gi('rf');
+var dropEl      = gi('drop');
+var fileInEl    = gi('fileIn');
+var stripEl     = gi('thumbStrip');
+var imgLblEl    = gi('imgLbl');
+var reorderHint = gi('reorderHint');
+var emptyState  = gi('emptyState');
+var tweetWrap   = gi('tweetWrap');
+var avEl        = gi('av');
+var pvName      = gi('pvName');
+var pvHandle    = gi('pvHandle');
+var pvTime      = gi('pvTime');
+var pvText      = gi('pvText');
+var imgGrid     = gi('imgGrid');
+var statReply   = gi('statReply');
+var statRT      = gi('statRT');
+var statLike    = gi('statLike');
+var tghost      = gi('tghost');
+var tghostImg   = gi('tghost-img');
+
+/* Random engagement stats — likes > retweets > replies */
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'') + 'K' : '' + n; }
+var likes    = Math.floor(Math.random() * 4001) + 1000;          /* 1000–5000 */
+var retweets = Math.floor(Math.random() * (likes - 100)) + 50;   /* 50–(likes-1) */
+var replies  = Math.floor(Math.random() * (retweets - 10)) + 5;  /* 5–(retweets-1) */
+statLike.textContent  = fmt(likes);
+statRT.textContent    = fmt(retweets);
+statReply.textContent = fmt(replies);
+
+/* Theme */
+var savedTheme = 'dark';
+try { savedTheme = localStorage.getItem('tp-theme') || 'dark'; } catch(e) {}
+applyTheme(savedTheme);
+themeBtn.addEventListener('click', function () {
+  var next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try { localStorage.setItem('tp-theme', next); } catch(e) {}
+});
+function applyTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  var dark = t === 'dark';
+  themeIco.textContent = dark ? '☀️' : '🌙';
+  themeLbl.textContent = dark ? 'Light Mode' : 'Dark Mode';
+}
+
+/* Time */
+function nowTime() {
+  var d = new Date(), h = d.getHours(), m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ap;
+}
+setInterval(function () {
+  if (tweetWrap.style.display !== 'none') pvTime.textContent = nowTime();
+}, 30000);
+
+/* Char counter */
+txtEl.addEventListener('input', function () { updateCounter(); renderPreview(); });
+function updateCounter() {
+  var n = txtEl.value.length, rem = 280 - n;
+  rfEl.style.strokeDashoffset = CIRC * (1 - n / 280);
+  if (rem < 0) {
+    charTxtEl.textContent = rem;
+    charTxtEl.className = 'char-txt over';
+    ringEl.className = 'ring over';
+  } else if (rem <= 20) {
+    charTxtEl.textContent = rem + ' remaining';
+    charTxtEl.className = 'char-txt warn';
+    ringEl.className = 'ring warn';
+  } else {
+    charTxtEl.textContent = rem + ' remaining';
+    charTxtEl.className = 'char-txt';
+    ringEl.className = 'ring';
+  }
+}
+
+/* Inputs */
+dnameEl.addEventListener('input', renderPreview);
+unameEl.addEventListener('input', function () { renderPreview(); scheduleAvatar(); });
+unameEl.addEventListener('change', function () { renderPreview(); fetchAvatar(); });
+unameEl.addEventListener('blur',   function () { fetchAvatar(); });
+
+function scheduleAvatar() {
+  clearTimeout(avatarTimer);
+  avatarTimer = setTimeout(fetchAvatar, 600);
+}
+
+/* Avatar via unavatar.io */
+function fetchAvatar() {
+  var handle = unameEl.value.trim().replace(/^@/, '');
+  if (!handle) { resetAvatar(); return; }
+
+  /* Only skip fetch if we have a confirmed src (non-empty string).
+     null means pending or failed — always retry on null. */
+  if (avatarCache[handle] && typeof avatarCache[handle] === 'string') {
+    applyAvatar(avatarCache[handle]); return;
+  }
+
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function () {
+    avatarCache[handle] = img.src;
+    if (unameEl.value.trim().replace(/^@/, '') === handle) applyAvatar(img.src);
+  };
+  img.onerror = function () {
+    delete avatarCache[handle]; /* remove so a retry is possible */
+    if (unameEl.value.trim().replace(/^@/, '') === handle) resetAvatar();
+  };
+  /* ?fallback=404 tells unavatar to return a 404 (onerror) instead of a placeholder */
+  img.src = 'https://unavatar.io/x/' + encodeURIComponent(handle) + '?fallback=404';
+}
+function applyAvatar(src) {
+  if (!src) { resetAvatar(); return; }
+  avEl.innerHTML = '';
+  var i = document.createElement('img'); i.src = src; i.alt = '';
+  avEl.appendChild(i);
+}
+function resetAvatar() {
+  avEl.innerHTML = (dnameEl.value.trim()[0] || '?').toUpperCase();
+}
+
+/* File upload */
+dropEl.addEventListener('dragover',  function (e) { e.preventDefault(); dropEl.classList.add('over'); });
+dropEl.addEventListener('dragleave', function ()  { dropEl.classList.remove('over'); });
+dropEl.addEventListener('drop',      function (e) { e.preventDefault(); dropEl.classList.remove('over'); ingestFiles(e.dataTransfer.files); });
+fileInEl.addEventListener('change',  function ()  { ingestFiles(fileInEl.files); fileInEl.value = ''; });
+
+function ingestFiles(files) {
+  var slots = 4 - imgs.length;
+  if (slots <= 0) return;
+  var list = Array.prototype.slice.call(files, 0, slots);
+  list.forEach(function (f) {
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var tmp = new Image();
+      tmp.onload = function () {
+        imgs.push({ src: ev.target.result, w: tmp.naturalWidth, h: tmp.naturalHeight });
+        renderThumbs(); renderPreview();
+      };
+      tmp.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+/* Thumbnails with mouse + touch reorder */
+var mouseFrom = null;
+var touchFrom = null;
+var touchTo   = null;
+
+function renderThumbs() {
+  stripEl.innerHTML = '';
+  imgLblEl.textContent = '(' + imgs.length + ' / 4)';
+  reorderHint.style.display = imgs.length > 1 ? '' : 'none';
+  dropEl.style.display      = imgs.length >= 4 ? 'none' : '';
+
+  imgs.forEach(function (im, i) {
+    var div = document.createElement('div');
+    div.className = 'thumb';
+    div.draggable = true;
+    div.setAttribute('data-i', i);
+
+    var img = document.createElement('img'); img.src = im.src;
+    var num = document.createElement('div'); num.className = 'thumb-num'; num.textContent = i + 1;
+    var del = document.createElement('button'); del.className = 'thumb-del'; del.textContent = '✕'; del.title = 'Remove';
+    del.addEventListener('click', function (e) {
+      e.stopPropagation();
+      imgs.splice(i, 1); renderThumbs(); renderPreview();
+    });
+
+    /* Mouse drag */
+    div.addEventListener('dragstart', function () {
+      mouseFrom = i;
+      setTimeout(function () { div.classList.add('dragging'); }, 0);
+    });
+    div.addEventListener('dragend', function () {
+      mouseFrom = null;
+      allThumbs().forEach(function (t) { t.classList.remove('dragging', 'drag-over'); });
+    });
+    div.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      if (mouseFrom !== null && mouseFrom !== i) {
+        allThumbs().forEach(function (t) { t.classList.remove('drag-over'); });
+        div.classList.add('drag-over');
+      }
+    });
+    div.addEventListener('dragleave', function () { div.classList.remove('drag-over'); });
+    div.addEventListener('drop', function (e) {
+      e.preventDefault();
+      if (mouseFrom !== null && mouseFrom !== i) doSwap(mouseFrom, i);
+    });
+
+    /* Touch drag */
+    div.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) return;
+      touchFrom = i;
+      tghostImg.src = im.src;
+      moveGhost(e.touches[0].clientX, e.touches[0].clientY);
+      tghost.style.display = 'block';
+      div.classList.add('dragging');
+    }, { passive: true });
+
+    div.addEventListener('touchmove', function (e) {
+      if (touchFrom === null) return;
+      e.preventDefault();
+      var t = e.touches[0];
+      moveGhost(t.clientX, t.clientY);
+      var el = document.elementFromPoint(t.clientX, t.clientY);
+      var target = el ? el.closest('.thumb') : null;
+      var ti = target ? parseInt(target.getAttribute('data-i'), 10) : null;
+      allThumbs().forEach(function (th) { th.classList.remove('drag-over'); });
+      if (ti !== null && ti !== touchFrom) { touchTo = ti; target.classList.add('drag-over'); }
+      else { touchTo = null; }
+    }, { passive: false });
+
+    div.addEventListener('touchend', function () {
+      tghost.style.display = 'none';
+      allThumbs().forEach(function (t) { t.classList.remove('dragging', 'drag-over'); });
+      if (touchFrom !== null && touchTo !== null && touchFrom !== touchTo) doSwap(touchFrom, touchTo);
+      touchFrom = null; touchTo = null;
+    }, { passive: true });
+
+    div.addEventListener('touchcancel', function () {
+      tghost.style.display = 'none';
+      allThumbs().forEach(function (t) { t.classList.remove('dragging', 'drag-over'); });
+      touchFrom = null; touchTo = null;
+    }, { passive: true });
+
+    div.appendChild(img); div.appendChild(num); div.appendChild(del);
+    stripEl.appendChild(div);
+  });
+}
+
+function allThumbs() { return Array.prototype.slice.call(document.querySelectorAll('.thumb')); }
+function moveGhost(x, y) { tghost.style.left = x + 'px'; tghost.style.top = y + 'px'; }
+function doSwap(a, b) { var m = imgs.splice(a, 1)[0]; imgs.splice(b, 0, m); renderThumbs(); renderPreview(); }
+
+/* Preview */
+function renderPreview() {
+  var name   = dnameEl.value.trim();
+  var handle = unameEl.value.trim().replace(/^@/, '');
+  var text   = txtEl.value;
+  var show   = !!(text.trim() || imgs.length || name || handle);
+
+  emptyState.style.display = show ? 'none' : '';
+  tweetWrap.style.display  = show ? ''     : 'none';
+
+  pvName.textContent   = name   || 'Your Name';
+  pvHandle.textContent = '@' + (handle || 'username');
+  pvTime.textContent   = nowTime();
+
+  if (!avEl.querySelector('img')) {
+    avEl.textContent = (name[0] || '?').toUpperCase();
+  }
+
+  pvText.style.display = text ? '' : 'none';
+  if (text) pvText.innerHTML = linkify(esc(text));
+
+  buildGrid();
+}
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function linkify(h) {
+  return h.replace(/(#\w+)/g, '<span class="ht">$1</span>')
+          .replace(/(@\w+)/g, '<span class="mn">$1</span>');
+}
+
+/* Image grid */
+function buildGrid() {
+  imgGrid.innerHTML = '';
+  imgGrid.className = 'img-grid';
+  if (!imgs.length) { imgGrid.style.display = 'none'; return; }
+  imgGrid.classList.add('n' + imgs.length);
+  [build1, build2, build3, build4][imgs.length - 1]();
+}
+
+function mkCell(src) {
+  var d = document.createElement('div'); d.className = 'cell';
+  var i = document.createElement('img'); i.src = src; d.appendChild(i); return d;
+}
+
+function build1() {
+  var o  = imgs[0];
+  var ar = Math.min(2.0, Math.max(0.75, o.w / o.h));
+  var c  = mkCell(o.src);
+  c.style.cssText = 'width:100%;aspect-ratio:' + ar.toFixed(5) + '/1;overflow:hidden;';
+  c.querySelector('img').style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;';
+  imgGrid.appendChild(c);
+  imgGrid.style.display = '';
+}
+
+function build2() {
+  imgs.slice(0, 2).forEach(function (im) { imgGrid.appendChild(mkCell(im.src)); });
+  imgGrid.style.display = '';
+}
+
+function build3() {
+  var colL = document.createElement('div'); colL.className = 'col-l';
+  var imgL = document.createElement('img'); imgL.src = imgs[0].src;
+  colL.appendChild(imgL);
+  var colR = document.createElement('div'); colR.className = 'col-r';
+  colR.appendChild(mkCell(imgs[1].src));
+  colR.appendChild(mkCell(imgs[2].src));
+  imgGrid.appendChild(colL); imgGrid.appendChild(colR);
+  imgGrid.style.display = '';
+}
+
+function build4() {
+  imgs.slice(0, 4).forEach(function (im) { imgGrid.appendChild(mkCell(im.src)); });
+  imgGrid.style.display = '';
+}
+
+/* Init */
+updateCounter();
+renderPreview();
+
+}());
+</script>
+</body>
+</html>
