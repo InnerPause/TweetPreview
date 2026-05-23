@@ -1,4 +1,4 @@
-# A Simple Tweet Preview 2.0
+# A Simple Tweet Preview
 
 A clean, accurate browser-based tool for previewing how a post will appear on X (formerly Twitter) — including precise image cropping, profile picture lookup, and an authentic X UI aesthetic. No installation, no dependencies, no data sent anywhere. Just open the file and use it.
 
@@ -76,7 +76,37 @@ The **first image in the list** occupies the dominant position (full left column
 
 ---
 
-## Technical Notes
+## Progressive Web App (PWA)
+
+A Simple Tweet Preview is installable as a PWA on both mobile and desktop.
+
+**On mobile (iOS / Android):**
+Open the site in your browser, tap the share icon, and choose **"Add to Home Screen"**. The app will appear on your home screen with its own icon and launch in standalone mode — no browser chrome, no address bar, just the tool.
+
+**On desktop (Chrome / Edge):**
+An install icon appears in the browser address bar when you visit the site. Click it to install the app as a standalone window.
+
+**Offline support:**
+Once installed, the app shell is cached by the Service Worker and works fully offline. The only feature that requires a live network connection is profile picture lookup — if offline, the avatar gracefully falls back to the display name initial with no error shown.
+
+---
+
+## Repository Structure
+
+```
+TweetPreview/
+├── index.html          # The entire application
+├── manifest.json       # PWA manifest
+├── service-worker.js   # Offline caching & PWA logic
+├── icons/
+│   ├── icon-192.png    # App icon (192×192) — replace with your own
+│   └── icon-512.png    # App icon (512×512) — replace with your own
+└── README.md
+```
+
+---
+
+
 
 - **No frameworks or libraries** — written in plain HTML, CSS, and vanilla JavaScript
 - **No server-side code** — everything runs in the browser
